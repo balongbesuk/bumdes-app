@@ -1,0 +1,141 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      String   @default("pengelola_unit") // admin, bendahara, pengelola_unit
+  avatarUrl String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  unitUsaha   UnitUsaha?  @relation(fields: [unitUsahaId], references: [id])
+  unitUsahaId String?
+
+  auditLogs AuditLog[]
+  artikel   Artikel[]
+}
+
+model UnitUsaha {
+  id          String   @id @default(cuid())
+  nama        String
+  deskripsi   String?
+  saldo       Float    @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  pengelola     User[]
+  transaksi     TransaksiUnit[]
+  setoranBumdes SetoranBumdes[]
+}
+
+model KategoriTransaksi {
+  id        String   @id @default(cuid())
+  nama      String
+  tipe      String   // PEMASUKAN, PENGELUARAN
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  transaksi TransaksiUnit[]
+}
+
+model TransaksiUnit {
+  id          String   @id @default(cuid())
+  tanggal     DateTime
+  jumlah      Float
+  keterangan  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  unitUsaha   UnitUsaha @relation(fields: [unitUsahaId], references: [id], onDelete: Cascade)
+  unitUsahaId String
+
+  kategori    KategoriTransaksi @relation(fields: [kategoriId], references: [id])
+  kategoriId  String
+}
+
+model SetoranBumdes {
+  id          String   @id @default(cuid())
+  tanggal     DateTime
+  jumlah      Float
+  keterangan  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  unitUsaha   UnitUsaha @relation(fields: [unitUsahaId], references: [id], onDelete: Cascade)
+  unitUsahaId String
+
+  kasBumdes   KasBumdes[]
+}
+
+model KasBumdes {
+  id          String   @id @default(cuid())
+  tanggal     DateTime
+  jumlah      Float
+  tipe        String   // PEMASUKAN, PENGELUARAN, SETORAN_UNIT
+  keterangan  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  setoran       SetoranBumdes? @relation(fields: [setoranId], references: [id])
+  setoranId     String?
+}
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  action      String   // CREATE, UPDATE, DELETE
+  entity      String   // Nama Tabel
+  entityId    String   // ID Data
+  details     String?  // JSON string
+  createdAt   DateTime @default(now())
+
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String
+}
+
+model BumdesProfile {
+  id          String   @id @default(cuid())
+  nama        String   @default("BUMDes Maju Bersama")
+  deskripsi   String?  // Untuk ditampilkan di halaman depan "Tentang BUMDes"
+  alamat      String?
+  badanHukum  String?
+  logoUrl     String?  // base64 image string for simplicity
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Artikel {
+  id          String   @id @default(cuid())
+  judul       String
+  slug        String   @unique
+  ringkasan   String?
+  konten      String   // Rich text or HTML
+  gambarUrl   String?
+  kategori    String   // BERITA, KEGIATAN
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  author      User     @relation(fields: [authorId], references: [id])
+  authorId    String
+}
+
+model Pengurus {
+  id          String   @id @default(cuid())
+  nama        String
+  jabatan     String
+  fotoUrl     String?
+  urut        Int      @default(0) // Untuk mengurutkan tampilan (misal: 1 untuk ketua)
+  bio         String?
+  aktif       Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
