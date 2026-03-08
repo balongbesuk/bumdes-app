@@ -3,7 +3,8 @@ import Link from "next/link"
 import { prisma } from "@/lib/prisma"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Newspaper, ArrowRight, ArrowLeft } from "lucide-react"
+import { Newspaper, ArrowRight, ArrowLeft, Search } from "lucide-react"
+import { Input } from "@/components/ui/input"
 import {
   Pagination,
   PaginationContent,
@@ -18,20 +19,34 @@ export const metadata: Metadata = {
   description: "Daftar seluruh berita dan kegiatan yang telah diterbitkan oleh BUMDes.",
 }
 
-export default async function ArtikelIndexPage(props: { searchParams: Promise<{ page?: string }> }) {
+export default async function ArtikelIndexPage(props: { 
+  searchParams: Promise<{ page?: string; search?: string }> 
+}) {
   const searchParams = await props.searchParams
   const page = Number(searchParams?.page) || 1
-  const take = 12 // 3x4 grid or 4x3 grid fits nicely
+  const search = searchParams?.search || ""
+  const take = 12
   const skip = (page - 1) * take
+
+  const where = {
+    published: true,
+    ...(search ? {
+      OR: [
+        { judul: { contains: search } },
+        { konten: { contains: search } },
+        { kategori: { contains: search } },
+      ]
+    } : {})
+  }
 
   const [semuaArtikel, totalCount] = await Promise.all([
     prisma.artikel.findMany({
-      where: { published: true },
+      where,
       orderBy: { createdAt: 'desc' },
       take,
       skip,
     }),
-    prisma.artikel.count({ where: { published: true } })
+    prisma.artikel.count({ where })
   ])
 
   const totalPages = Math.ceil(totalCount / take)
@@ -52,16 +67,29 @@ export default async function ArtikelIndexPage(props: { searchParams: Promise<{ 
         </div>
       </header>
       <main className="flex-1 container mx-auto px-4 md:px-6 py-12">
-        <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
-           <div className="space-y-3">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-12">
+           <div className="space-y-3 text-center md:text-left">
              <div className="inline-block rounded-full border bg-primary/5 px-4 py-1.5 text-sm font-semibold text-primary shadow-sm">
                Kumpulan Artikel
              </div>
-             <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">Semua Berita & Kegiatan</h2>
-             <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+             <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl uppercase">Semua Berita & Kegiatan</h2>
+             <p className="max-w-[700px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
                Daftar seluruh publikasi yang telah kami terbitkan untuk transparansi dan informasi publik.
              </p>
            </div>
+           {/* Search Box */}
+           <form action="/artikel" method="GET" className="flex gap-2 w-full max-w-md shrink-0">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input 
+                   name="search" 
+                   placeholder="Cari berita atau kategori..." 
+                   className="pl-9 h-11 w-full rounded-2xl bg-muted/30 border-primary/10 focus-visible:ring-primary shadow-inner"
+                   defaultValue={search}
+                />
+              </div>
+              <Button type="submit" className="rounded-2xl h-11 px-8 font-semibold shadow-md active:scale-95 transition-transform">Cari</Button>
+           </form>
         </div>
 
         {semuaArtikel.length > 0 ? (
@@ -111,7 +139,7 @@ export default async function ArtikelIndexPage(props: { searchParams: Promise<{ 
             <PaginationContent>
               {hasPrev ? (
                 <PaginationItem>
-                  <PaginationPrevious href={`/artikel?page=${page - 1}`} text="Sebelumnya" />
+                  <PaginationPrevious href={`/artikel?page=${page - 1}${search ? `&search=${search}` : ""}`} text="Sebelumnya" />
                 </PaginationItem>
               ) : (
                 <PaginationItem>
@@ -125,7 +153,7 @@ export default async function ArtikelIndexPage(props: { searchParams: Promise<{ 
 
               {hasNext ? (
                 <PaginationItem>
-                  <PaginationNext href={`/artikel?page=${page + 1}`} text="Selanjutnya" />
+                  <PaginationNext href={`/artikel?page=${page + 1}${search ? `&search=${search}` : ""}`} text="Selanjutnya" />
                 </PaginationItem>
               ) : (
                 <PaginationItem>
