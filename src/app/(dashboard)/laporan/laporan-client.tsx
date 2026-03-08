@@ -141,13 +141,13 @@ export default function LaporanPage({ data, availableYears }: { data: any, avail
                         <TableCell className="text-center text-muted-foreground">{index + 1}</TableCell>
                         <TableCell className="font-medium">{m.monthName}</TableCell>
                         <TableCell className="text-right text-green-600">
-                           {new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(m.pemasukan)}
+                           {new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(m.pemasukan)}
                         </TableCell>
                         <TableCell className="text-right text-red-600">
-                           {new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(m.pengeluaran)}
+                           {new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(m.pengeluaran)}
                         </TableCell>
                         <TableCell className={`text-right font-bold ${m.laba >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-                           {new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(m.laba)}
+                           {new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(m.laba)}
                         </TableCell>
                      </TableRow>
                   ))}
@@ -180,16 +180,16 @@ export default function LaporanPage({ data, availableYears }: { data: any, avail
                         <TableCell className="text-center text-muted-foreground">{index + 1}</TableCell>
                         <TableCell className="font-medium">{u.nama}</TableCell>
                         <TableCell className="text-right text-green-600">
-                           {new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(u.pemasukan)}
+                           {new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(u.pemasukan)}
                         </TableCell>
                         <TableCell className="text-right text-red-600">
-                           {new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(u.pengeluaran)}
+                           {new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(u.pengeluaran)}
                         </TableCell>
                         <TableCell className={`text-right ${u.setoran >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-                           {new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(u.setoran)}
+                           {new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(u.setoran)}
                         </TableCell>
                         <TableCell className={`text-right font-bold ${u.saldo >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-                           {new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(u.saldo)}
+                           {new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(u.saldo)}
                         </TableCell>
                      </TableRow>
                   ))}
@@ -231,16 +231,16 @@ export default function LaporanPage({ data, availableYears }: { data: any, avail
                      </TableCell>
                      <TableCell>{k.keterangan}</TableCell>
                      <TableCell className="text-right text-green-600" suppressHydrationWarning>
-                       {(k.tipe === "PEMASUKAN" || k.tipe === "SETORAN_UNIT") ? new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(k.jumlah) : "-"}
+                       {(k.tipe === "PEMASUKAN" || k.tipe === "SETORAN_UNIT") ? new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(k.jumlah) : "-"}
                      </TableCell>
                      <TableCell className="text-right text-red-600" suppressHydrationWarning>
-                       {k.tipe === "PENGELUARAN" ? new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(k.jumlah) : "-"}
+                       {k.tipe === "PENGELUARAN" ? new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(k.jumlah) : "-"}
                      </TableCell>
                      <TableCell 
                        className={`text-right font-medium ${runningSaldo >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`} 
                        suppressHydrationWarning
                      >
-                        {new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(runningSaldo)}
+                        {new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(runningSaldo)}
                      </TableCell>
                    </TableRow>
                  )

@@ -64,7 +64,9 @@ export default async function UnitUsahaPage() {
                   <TableCell className={`font-bold ${unit.saldo >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
                     {new Intl.NumberFormat("id-ID", {
                       style: "currency",
-                      currency: "IDR"
+                      currency: "IDR",
+                      minimumFractionDigits: 0,
+                      maximumFractionDigits: 0
                     }).format(unit.saldo)}
                   </TableCell>
                   <TableCell className="text-right flex justify-end gap-2">

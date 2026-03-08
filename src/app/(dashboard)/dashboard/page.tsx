@@ -172,7 +172,12 @@ export default async function DashboardPage() {
   const yearlyChartData = Array.from(yearlyDataMap.values())
 
   const formatRupiah = (angka: number) => {
-    return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR" }).format(angka)
+    return new Intl.NumberFormat("id-ID", { 
+      style: "currency", 
+      currency: "IDR",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(angka)
   }
 
   return (

@@ -202,7 +202,9 @@ export default async function SetoranBumdesPage({
                   <TableCell className="text-right font-medium text-green-600 dark:text-green-400">
                     + {new Intl.NumberFormat("id-ID", {
                       style: "currency",
-                      currency: "IDR"
+                      currency: "IDR",
+                      minimumFractionDigits: 0,
+                      maximumFractionDigits: 0
                     }).format(s.jumlah)}
                   </TableCell>
                   {role !== "pengelola_unit" && (
@@ -218,7 +220,7 @@ export default async function SetoranBumdesPage({
               <TableRow className="bg-muted/50 font-bold hover:bg-muted/50">
                  <TableCell colSpan={role !== "pengelola_unit" ? 4 : 2} className="text-right">Total Keseluruhan Filter</TableCell>
                  <TableCell className="text-right text-green-600 dark:text-green-400">
-                   {new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR" }).format(totalSetoran)}
+                   {new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(totalSetoran)}
                  </TableCell>
                  {role !== "pengelola_unit" && <TableCell></TableCell>}
               </TableRow>

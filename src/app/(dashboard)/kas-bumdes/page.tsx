@@ -154,7 +154,7 @@ export default async function KasBumdesPage({
            }`}>
               <span className="text-sm opacity-80 mb-1 block">Saldo Saat Ini</span>
               <span className="text-xl font-bold">
-                 {saldoBumdes < 0 ? "-" : "+"}{new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR" }).format(Math.abs(saldoBumdes))}
+                 {saldoBumdes < 0 ? "-" : "+"}{new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(Math.abs(saldoBumdes))}
               </span>
            </div>
           <Link href="/kas-bumdes/tambah">
@@ -211,7 +211,9 @@ export default async function KasBumdesPage({
                     {(k.tipe === "PEMASUKAN" || k.tipe === "SETORAN_UNIT") ? "+" : "-"} 
                     {new Intl.NumberFormat("id-ID", {
                       style: "currency",
-                      currency: "IDR"
+                      currency: "IDR",
+                      minimumFractionDigits: 0,
+                      maximumFractionDigits: 0
                     }).format(k.jumlah)}
                   </TableCell>
                   <TableCell className="text-right flex justify-end gap-2">

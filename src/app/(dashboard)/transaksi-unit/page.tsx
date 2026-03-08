@@ -208,7 +208,9 @@ export default async function TransaksiUnitPage({
                     {t.kategori.tipe === "PEMASUKAN" ? "+" : "-"} 
                     {new Intl.NumberFormat("id-ID", {
                       style: "currency",
-                      currency: "IDR"
+                      currency: "IDR",
+                      minimumFractionDigits: 0,
+                      maximumFractionDigits: 0
                     }).format(t.jumlah)}
                   </TableCell>
                   <TableCell className="text-right flex justify-end gap-2">
