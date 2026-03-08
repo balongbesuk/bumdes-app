@@ -4,11 +4,10 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Building2, ArrowRight, Newspaper, Users, ChevronRight, Menu, Search } from "lucide-react"
+import { Building2, ArrowRight, Newspaper, Users, ChevronRight, Menu } from "lucide-react"
 import { ModeToggle } from "@/components/layout/mode-toggle"
 import { HeroSlider } from "@/components/hero-slider"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
 
 // We use a client component to handle dynamic title based on database content
 export default function HomePage() {
@@ -173,29 +172,16 @@ export default function HomePage() {
         {/* Berita & Kegiatan */}
         <section id="berita" className="w-full py-12 md:py-24 lg:py-32 bg-slate-50/50 dark:bg-muted/10 border-y">
           <div className="container px-4 md:px-6 mx-auto">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-12">
-              <div className="space-y-3 text-center md:text-left">
+            <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
+              <div className="space-y-3">
                 <div className="inline-block rounded-full border bg-primary/5 px-4 py-1.5 text-sm font-semibold text-primary shadow-sm">
                   Kabar Terbaru
                 </div>
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">Berita & Kegiatan</h2>
-                <p className="max-w-[700px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
                   Ikuti terus perkembangan dan kegiatan terbaru dari unit-unit usaha kami.
                 </p>
               </div>
-              
-              {/* Client-side search form redirecting to /artikel */}
-              <form action="/artikel" method="GET" className="flex gap-2 w-full max-w-sm shrink-0">
-                 <div className="relative flex-1">
-                   <Search className="absolute left-2.5 top-3 h-4 w-4 text-muted-foreground" />
-                   <Input 
-                      name="search" 
-                      placeholder="Cari berita..." 
-                      className="pl-9 h-10 w-full rounded-2xl bg-background/50 border-primary/20"
-                   />
-                 </div>
-                 <Button type="submit" className="rounded-2xl h-10">Cari</Button>
-              </form>
             </div>
             
             {artikelTerbaru.length > 0 ? (
