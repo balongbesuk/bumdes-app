@@ -104,6 +104,7 @@ export async function updateProfilBumdes(formData: FormData) {
 
   revalidatePath("/settings")
   revalidatePath("/settings/profil")
+  revalidatePath("/login")
   revalidatePath("/")
   
   redirect("/settings")
