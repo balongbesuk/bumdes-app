@@ -10,7 +10,6 @@ import path from "path"
 
 async function updateFavicon(base64Data: string | null) {
   try {
-    const publicPath = path.join(process.cwd(), "src/app/favicon.ico")
     
     if (!base64Data || base64Data === "" || base64Data.startsWith("logo-removed")) {
       return
@@ -22,9 +21,20 @@ async function updateFavicon(base64Data: string | null) {
     }
 
     const buffer = Buffer.from(matches[2], 'base64')
+    
+    // Write to src/app/favicon.ico
+    const srcPath = path.join(process.cwd(), "src/app/favicon.ico")
+    fs.writeFileSync(srcPath, buffer)
+    
+    // Also write to public/favicon.ico if exists or for good measure
+    const publicDir = path.join(process.cwd(), "public")
+    if (!fs.existsSync(publicDir)) fs.mkdirSync(publicDir, { recursive: true })
+    const publicPath = path.join(publicDir, "favicon.ico")
     fs.writeFileSync(publicPath, buffer)
+
+    console.log(`Favicon updated in src/app and public. Buffer size: ${buffer.length}`)
   } catch (error) {
-    console.error("Gagal memperbarui favicon:", error)
+    console.error("DEBUG: Error in updateFavicon:", error)
   }
 }
 
