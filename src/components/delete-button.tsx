@@ -18,13 +18,21 @@ import { toast } from "sonner"
 
 interface DeleteButtonProps {
   id: string
-  action: (id: string) => Promise<void>
-  title: string
-  description: string
+  action: (id: string) => Promise<any>
+  title?: string
+  description?: string
   className?: string
+  iconOnly?: boolean
 }
 
-export function DeleteButton({ id, action, title, description, className }: DeleteButtonProps) {
+export function DeleteButton({ 
+  id, 
+  action, 
+  title = "Hapus Data?", 
+  description = "Tindakan ini permanen dan tidak dapat dibatalkan.", 
+  className,
+  iconOnly 
+}: DeleteButtonProps) {
   const [open, setOpen] = useState(false)
   const [isPending, startTransition] = useTransition()
 
