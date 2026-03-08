@@ -2,6 +2,23 @@ import { prisma } from "@/lib/prisma"
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import { ArrowLeft, Calendar, User } from "lucide-react"
+import type { Metadata } from "next"
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params
+  const [artikel, profile] = await Promise.all([
+    prisma.artikel.findUnique({ where: { slug } }),
+    prisma.bumdesProfile.findFirst()
+  ])
+  
+  if (!artikel) return { title: "Artikel Tidak Ditemukan" }
+  
+  const namaBumdes = profile?.nama || "BUMDes App"
+  return {
+    title: `${artikel.judul} - ${namaBumdes}`,
+    description: artikel.ringkasan || `Baca selengkapnya mengenai ${artikel.judul} di portal resmi ${namaBumdes}.`
+  }
+}
 
 export default async function ArtikelDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
