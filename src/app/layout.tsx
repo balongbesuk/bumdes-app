@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
 import { NextAuthProvider } from "@/components/next-auth-provider";
 
 const inter = Inter({
@@ -48,17 +47,11 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <NextAuthProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            {children}
-            <Toaster />
-          </ThemeProvider>
+          {children}
+          <Toaster />
         </NextAuthProvider>
       </body>
     </html>
   );
 }
+

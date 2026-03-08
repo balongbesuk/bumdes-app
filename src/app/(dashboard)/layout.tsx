@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import { prisma } from "@/lib/prisma"
+import { ThemeProvider } from "@/components/theme-provider"
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const session = await getServerSession(authOptions)
@@ -18,5 +19,18 @@ export default async function DashboardLayout({ children }: { children: React.Re
   
   const mergedUser = { ...session.user, ...dbUser }
   
-  return <SidebarLayout user={mergedUser} bumdesProfile={profile}>{children}</SidebarLayout>
+  return (
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="system"
+      enableSystem
+      disableTransitionOnChange
+      storageKey="admin-theme"
+    >
+      <SidebarLayout user={mergedUser} bumdesProfile={profile}>
+        {children}
+      </SidebarLayout>
+    </ThemeProvider>
+  )
 }
+
