@@ -1,3 +1,5 @@
+<img width="2539" height="943" alt="image" src="https://github.com/user-attachments/assets/8aceaaf7-fcac-4716-b94d-0f0bcad73f3a" />
+
 # BUMDes App - Simpel Sistem Manajemen Keuangan & Berita
 
 Sistem Informasi Manajemen BUMDes adalah aplikasi berbasis web yang dirancang untuk membantu pengelolaan unit usaha desa secara transparan, akuntabel, dan profesional.
@@ -9,10 +11,7 @@ Sistem Informasi Manajemen BUMDes adalah aplikasi berbasis web yang dirancang un
 - **Buku Kas Utama**: Pencatatan terpusat aliran kas masuk (pemasukan & setoran unit) dan keluar.
 - **Laporan Otomatis**: Generate laporan keuangan tahunan dan detail unit ke format PDF.
 - **Portal Publik**: Halaman profil BUMDes, daftar pengurus, dan kabar berita desa untuk masyarakat.
-- **Keamanan Berlapis**: Akses berbasis role (Admin, Bendahara, Pengelola Unit) dan Audit Log aktivitas.
-
-## Status Rilis: **v1.0.0 (Public Release)**
-*Aplikasi ini telah divalidasi dan siap digunakan untuk kebutuhan operasional maupun presentasi hasil.*
+- **Akun Untuk Pengguna**: Akses berbasis role (Admin, Bendahara, Pengelola Unit) dan Audit Log aktivitas.
 
 ## Teknologi yang Digunakan
 
