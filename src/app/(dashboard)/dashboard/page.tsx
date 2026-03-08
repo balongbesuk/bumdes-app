@@ -12,6 +12,8 @@ import { Building2, Wallet, ArrowUpRight, ArrowDownRight, CircleDollarSign, Aler
 import { OverviewChart } from "@/components/dashboard/overview-chart"
 import { ProfitChart } from "@/components/dashboard/profit-chart"
 import { YearlyGrowthChart } from "@/components/dashboard/yearly-growth-chart"
+import { GrowthChartContainer } from "@/components/dashboard/growth-chart-container"
+
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
@@ -170,6 +172,50 @@ export default async function DashboardPage() {
   }
 
   const yearlyChartData = Array.from(yearlyDataMap.values())
+
+  // 5. Monthly Growth for Current Year (12 Months)
+  const currentYearMonthlyDataMap = new Map<string, { year: string, pemasukan: number, pengeluaran: number }>()
+  for (let i = 0; i < 12; i++) {
+    currentYearMonthlyDataMap.set(i.toString(), { year: monthNames[i], pemasukan: 0, pengeluaran: 0 })
+  }
+
+  const firstDayOfYear = new Date(now.getFullYear(), 0, 1)
+
+  if (role === 'admin' || role === 'bendahara') {
+    const kCurrentYear = await prisma.kasBumdes.findMany({
+      where: { tanggal: { gte: firstDayOfYear } }
+    })
+    kCurrentYear.forEach(k => {
+      if (k.tanggal.getFullYear() === now.getFullYear()) {
+        const mKey = k.tanggal.getMonth().toString()
+        if (currentYearMonthlyDataMap.has(mKey)) {
+          const entry = currentYearMonthlyDataMap.get(mKey)!
+          if (k.tipe === 'PEMASUKAN' || k.tipe === 'SETORAN_UNIT') entry.pemasukan += k.jumlah
+          else entry.pengeluaran += k.jumlah
+        }
+      }
+    })
+  } else {
+    const tCurrentYear = await prisma.transaksiUnit.findMany({
+      where: { 
+        unitUsahaId: assignedUnitId ?? "", 
+        tanggal: { gte: firstDayOfYear } 
+      },
+      include: { kategori: true }
+    })
+    tCurrentYear.forEach(t => {
+      if (t.tanggal.getFullYear() === now.getFullYear()) {
+        const mKey = t.tanggal.getMonth().toString()
+        if (currentYearMonthlyDataMap.has(mKey)) {
+          const entry = currentYearMonthlyDataMap.get(mKey)!
+          if (t.kategori.tipe === 'PEMASUKAN') entry.pemasukan += t.jumlah
+          else entry.pengeluaran += t.jumlah
+        }
+      }
+    })
+  }
+
+  const currentYearMonthlyChartData = Array.from(currentYearMonthlyDataMap.values())
 
   const formatRupiah = (angka: number) => {
     return new Intl.NumberFormat("id-ID", { 
@@ -337,33 +383,30 @@ export default async function DashboardPage() {
         </Card>
       </div>
 
-      {(role === 'admin' || role === 'bendahara') && (
-         <div className="grid gap-4 mt-4 lg:grid-cols-2">
-           <Card>
-             <CardHeader>
-               <CardTitle>Statistik Pertumbuhan 5 Tahun</CardTitle>
-               <CardDescription>Grafik komparasi pemasukan dan pengeluaran dari tahun ke tahun.</CardDescription>
-             </CardHeader>
-             <CardContent className="pl-2 overflow-x-auto pb-4">
-               <div className="min-w-[500px]">
-                 <YearlyGrowthChart data={yearlyChartData} />
-               </div>
-             </CardContent>
-           </Card>
+        {(role === 'admin' || role === 'bendahara') && (
+          <div className="grid gap-4 mt-4 lg:grid-cols-2">
+            <Card>
+              <CardContent className="pl-2 overflow-x-auto pb-4 pt-4">
+                <GrowthChartContainer 
+                  yearlyData={yearlyChartData} 
+                  monthlyData={currentYearMonthlyChartData} 
+                />
+              </CardContent>
+            </Card>
 
-           <Card>
-             <CardHeader>
-               <CardTitle>Laba Bersih Per Unit Usaha (Kumulatif)</CardTitle>
-               <CardDescription>Perbandingan performa laba murni setelah dikurangi pengeluaran operasional.</CardDescription>
-             </CardHeader>
-             <CardContent className="pl-2 overflow-x-auto pb-4">
-               <div className="min-w-[400px]">
-                 <ProfitChart data={profitData} />
-               </div>
-             </CardContent>
-           </Card>
-         </div>
-      )}
+            <Card>
+              <CardHeader>
+                <CardTitle>Laba Bersih Per Unit Usaha (Kumulatif)</CardTitle>
+                <CardDescription>Perbandingan performa laba murni setelah dikurangi pengeluaran operasional.</CardDescription>
+              </CardHeader>
+              <CardContent className="pl-2 overflow-x-auto pb-4">
+                <div className="min-w-[400px]">
+                  <ProfitChart data={profitData} />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
     </div>
   )
 }
