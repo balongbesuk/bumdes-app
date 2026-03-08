@@ -4,7 +4,9 @@ import { prisma } from "@/lib/prisma"
 import { redirect } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Plus, Trash, UserCircle, Pencil } from "lucide-react"
+import { Plus, UserCircle, Pencil } from "lucide-react"
+import { DeleteButton } from "@/components/delete-button"
+import { deletePengurus } from "@/app/actions/web-admin"
 
 export default async function PengurusPage() {
   const session = await getServerSession(authOptions)
@@ -74,15 +76,12 @@ export default async function PengurusPage() {
                              <Pencil className="w-4 h-4" />
                            </Button>
                          </Link>
-                         <form action={async () => {
-                            "use server"
-                            const { deletePengurus } = await import("@/app/actions/web-admin")
-                            await deletePengurus(item.id)
-                         }}>
-                           <Button variant="ghost" size="icon" type="submit" className="text-destructive hover:bg-destructive/10 hover:text-destructive">
-                             <Trash className="w-4 h-4" />
-                           </Button>
-                         </form>
+                         <DeleteButton 
+                            id={item.id} 
+                            action={deletePengurus} 
+                            title="Hapus Pengurus?" 
+                            description={`Apakah Anda yakin ingin menghapus "${item.nama}" dari daftar pengurus? Tindakan ini tidak dapat dibatalkan.`}
+                          />
                        </div>
                     </td>
                   </tr>

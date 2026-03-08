@@ -4,15 +4,16 @@ import { prisma } from "@/lib/prisma"
 import { redirect } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Plus, Trash, Eye, Pencil } from "lucide-react"
+import { Plus, Eye, Pencil } from "lucide-react"
 import {
   Pagination,
   PaginationContent,
   PaginationItem,
-  PaginationLink,
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination"
+import { DeleteButton } from "@/components/delete-button"
+import { deleteArtikel } from "@/app/actions/web-admin"
 
 export default async function ArtikelPage(props: { searchParams: Promise<{ page?: string }> }) {
   const searchParams = await props.searchParams
@@ -35,7 +36,6 @@ export default async function ArtikelPage(props: { searchParams: Promise<{ page?
   const totalPages = Math.ceil(totalCount / take)
   const hasNext = page < totalPages
   const hasPrev = page > 1
-
 
   return (
     <div className="space-y-6">
@@ -99,15 +99,12 @@ export default async function ArtikelPage(props: { searchParams: Promise<{ page?
                              <Pencil className="w-4 h-4" />
                            </Button>
                          </Link>
-                         <form action={async () => {
-                            "use server"
-                            const { deleteArtikel } = await import("@/app/actions/web-admin")
-                            await deleteArtikel(item.id)
-                         }}>
-                           <Button variant="ghost" size="icon" type="submit" title="Hapus" className="text-destructive hover:bg-destructive/10 hover:text-destructive">
-                             <Trash className="w-4 h-4" />
-                           </Button>
-                         </form>
+                         <DeleteButton 
+                            id={item.id} 
+                            action={deleteArtikel} 
+                            title="Hapus Artikel?" 
+                            description={`Apakah Anda yakin ingin menghapus artikel "${item.judul}"? Tindakan ini tidak dapat dibatalkan.`}
+                          />
                        </div>
                     </td>
                   </tr>
@@ -131,7 +128,6 @@ export default async function ArtikelPage(props: { searchParams: Promise<{ page?
               </PaginationItem>
             )}
 
-            {/* Pagination Numbers (simplified) */}
             <span className="text-sm text-muted-foreground px-4">
               Halaman {page} dari {totalPages}
             </span>

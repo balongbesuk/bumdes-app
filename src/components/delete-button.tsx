@@ -1,64 +1,79 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
-import { useTransition, useState } from "react"
+import { useState, useTransition } from "react"
 import { Trash } from "lucide-react"
+import { Button } from "@/components/ui/button"
 import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import { toast } from "sonner"
 
-export function DeleteButton({ action, id, iconOnly }: { action: (id: string) => Promise<any>, id: string, iconOnly?: boolean }) {
-  const [isPending, startTransition] = useTransition()
+interface DeleteButtonProps {
+  id: string
+  action: (id: string) => Promise<void>
+  title: string
+  description: string
+  className?: string
+}
+
+export function DeleteButton({ id, action, title, description, className }: DeleteButtonProps) {
   const [open, setOpen] = useState(false)
+  const [isPending, startTransition] = useTransition()
 
   const handleDelete = () => {
     startTransition(async () => {
-      await action(id)
-      setOpen(false)
+      try {
+        await action(id)
+        toast.success("Berhasil dihapus")
+        setOpen(false)
+      } catch (error) {
+        toast.error("Gagal menghapus data")
+        console.error(error)
+      }
     })
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger id={`delete-trigger-${id}`} asChild>
-        {iconOnly ? (
-          <Button variant="ghost" size="icon" className="text-destructive hover:bg-destructive/10 hover:text-destructive" title="Hapus">
-            <Trash className="w-4 h-4" />
-          </Button>
-        ) : (
-          <Button variant="destructive" size="sm">Hapus</Button>
-        )}
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Konfirmasi Penghapusan</DialogTitle>
-          <DialogDescription>
-            Apakah Anda yakin ingin menghapus data ini? Tindakan ini permanen dan tidak dapat dibatalkan.
-          </DialogDescription>
-        </DialogHeader>
-        <DialogFooter>
-          <DialogClose asChild>
-            <Button variant="outline" type="button" disabled={isPending}>
-              Batal
-            </Button>
-          </DialogClose>
-          <Button 
-            variant="destructive" 
-            onClick={handleDelete}
+    <AlertDialog open={open} onOpenChange={setOpen}>
+      <AlertDialogTrigger asChild>
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          title="Hapus" 
+          className={className || "text-destructive hover:bg-destructive/10 hover:text-destructive"}
+        >
+          <Trash className="w-4 h-4" />
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>{title}</AlertDialogTitle>
+          <AlertDialogDescription>
+            {description}
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel disabled={isPending}>Batal</AlertDialogCancel>
+          <AlertDialogAction 
+            onClick={(e) => {
+              e.preventDefault()
+              handleDelete()
+            }}
             disabled={isPending}
-            type="button"
+            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
           >
             {isPending ? "Menghapus..." : "Ya, Hapus"}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   )
 }
