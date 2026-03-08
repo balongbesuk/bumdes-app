@@ -12,7 +12,23 @@ import { updateProfilBumdes } from "@/app/actions/profil"
 export function ProfilForm({ initialData }: { initialData: any }) {
   const [loading, setLoading] = useState(false)
   const [logoPreview, setLogoPreview] = useState<string | null>(initialData?.logoUrl || null)
+  const [faviconPreview, setFaviconPreview] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const resizeImage = (base64Str: string, size: number): Promise<string> => {
+    return new Promise((resolve) => {
+      const img = document.createElement('img')
+      img.src = base64Str
+      img.onload = () => {
+        const canvas = document.createElement('canvas')
+        canvas.width = size
+        canvas.height = size
+        const ctx = canvas.getContext('2d')
+        ctx?.drawImage(img, 0, 0, size, size)
+        resolve(canvas.toDataURL('image/png'))
+      }
+    })
+  }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -22,8 +38,13 @@ export function ProfilForm({ initialData }: { initialData: any }) {
         return
       }
       const reader = new FileReader()
-      reader.onloadend = () => {
-        setLogoPreview(reader.result as string)
+      reader.onloadend = async () => {
+        const base64 = reader.result as string
+        setLogoPreview(base64)
+        
+        // Generate separate 32x32 version for favicon
+        const resized = await resizeImage(base64, 32)
+        setFaviconPreview(resized)
       }
       reader.readAsDataURL(file)
     }
@@ -39,6 +60,9 @@ export function ProfilForm({ initialData }: { initialData: any }) {
   async function clientAction(formData: FormData) {
     if (logoPreview) {
        formData.set("logoUrl", logoPreview)
+    }
+    if (faviconPreview) {
+       formData.set("faviconUrl", faviconPreview)
     }
     
     setLoading(true)

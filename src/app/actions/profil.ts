@@ -5,6 +5,28 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
+import fs from "fs"
+import path from "path"
+
+async function updateFavicon(base64Data: string | null) {
+  try {
+    const publicPath = path.join(process.cwd(), "src/app/favicon.ico")
+    
+    if (!base64Data || base64Data === "" || base64Data.startsWith("logo-removed")) {
+      return
+    }
+
+    const matches = base64Data.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/)
+    if (!matches || matches.length !== 3) {
+      return
+    }
+
+    const buffer = Buffer.from(matches[2], 'base64')
+    fs.writeFileSync(publicPath, buffer)
+  } catch (error) {
+    console.error("Gagal memperbarui favicon:", error)
+  }
+}
 
 export async function updateProfilBumdes(formData: FormData) {
   const session = await getServerSession(authOptions)
@@ -16,6 +38,7 @@ export async function updateProfilBumdes(formData: FormData) {
   const alamat = formData.get("alamat") as string
   const badanHukum = formData.get("badanHukum") as string
   const logoUrl = formData.get("logoUrl") as string
+  const faviconUrl = formData.get("faviconUrl") as string
   const deskripsi = formData.get("deskripsi") as string
 
   if (!nama) {
@@ -53,6 +76,12 @@ export async function updateProfilBumdes(formData: FormData) {
      })
   }
 
+  // Update favicon in filesystem: use resized faviconUrl if available, otherwise use finalLogo
+  const logoForFavicon = faviconUrl || finalLogo
+  if (logoForFavicon && logoForFavicon.startsWith("data:image")) {
+    await updateFavicon(logoForFavicon)
+  }
+
   await prisma.auditLog.create({
       data: {
          action: "UPDATE",
@@ -65,7 +94,6 @@ export async function updateProfilBumdes(formData: FormData) {
 
   revalidatePath("/settings")
   revalidatePath("/settings/profil")
-  // also need to revalidate wherever the logo appears, e.g., dashboard
   revalidatePath("/")
   
   redirect("/settings")
