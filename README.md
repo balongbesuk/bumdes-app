@@ -44,7 +44,10 @@ Jika Anda tidak menggunakan Git, cukup download script ini sebagai file ZIP (Kli
 ### Langkah 3: Persiapan Aplikasi & Database
 1. Buka folder aplikasi tersebut.
 2. Klik kanan di area kosong di dalam folder tersebut, pilih **"Open in Terminal"** atau buka **Command Prompt** lalu arahkan ke folder tersebut.
-3. Ketik perintah berikut satu per satu dan tunggu hingga selesai:
+3. Buat file pengaturan dengan menyalin contoh yang ada:
+   - **Windows (CMD):** `copy .env.example .env`
+   - **Mac/Linux/Git Bash:** `cp .env.example .env`
+4. Ketik perintah berikut satu per satu dan tunggu hingga selesai:
    ```bash
    # Mengunduh modul yang dibutuhkan aplikasi
    npm install
