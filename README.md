@@ -23,35 +23,58 @@ Sistem Informasi Manajemen BUMDes adalah aplikasi berbasis web yang dirancang un
 - **Authentication**: [NextAuth.js](https://next-auth.js.org)
 - **Icons**: [Lucide React](https://lucide.dev)
 
-## Cara Menjalankan
+## 🚀 Panduan Instalasi (Untuk Pemula)
 
-### Persiapan
-1. Install dependencies:
+Ikuti langkah-langkah di bawah ini untuk menjalankan aplikasi di komputer Anda.
+
+### Langkah 1: Instalasi Perangkat Pendukung
+Anda memerlukan **Node.js** terpasang di komputer Anda. 
+1. Buka situs [nodejs.org](https://nodejs.org).
+2. Download versi **LTS** (Recommended for most users).
+3. Jalankan file yang di-download dan ikuti instruksi instalasi sampai selesai.
+4. Untuk memastikan sudah terpasang, buka **Command Prompt (CMD)** dan ketik:
    ```bash
-   npm install
+   node -v
    ```
-2. Setup database:
+   *(Jika muncul angka versi seperti v20.x.x, berarti sudah berhasil).*
+
+### Langkah 2: Download File Aplikasi
+Jika Anda tidak menggunakan Git, cukup download script ini sebagai file ZIP (Klik tombol **Code** hijau di Github lalu pilih **Download ZIP**), kemudian ekstrak file tersebut ke dalam folder di komputer Anda.
+
+### Langkah 3: Persiapan Aplikasi & Database
+1. Buka folder aplikasi tersebut.
+2. Klik kanan di area kosong di dalam folder tersebut, pilih **"Open in Terminal"** atau buka **Command Prompt** lalu arahkan ke folder tersebut.
+3. Ketik perintah berikut satu per satu dan tunggu hingga selesai:
    ```bash
+   # Mengunduh modul yang dibutuhkan aplikasi
+   npm install
+
+   # Menyiapkan struktur database
    npx prisma generate
    npx prisma db push
+
+   # Mengisi data awal (Data Demo)
    npx prisma db seed
    ```
 
-### Jalankan Mode Pengembangan
+### Langkah 4: Menjalankan Aplikasi
+Setelah persiapan selesai, jalankan perintah:
 ```bash
 npm run dev
 ```
-
-### Jalankan Mode Produksi (Rilis Publik)
-1. Matikan server pengembangan (`Ctrl+C`).
-2. Build aplikasi:
-   ```bash
-   npm run build
-   ```
-3. Jalankan server produksi:
-   ```bash
-   npm run start
-   ```
+Tunggu hingga muncul pesan seperti `Ready in ...ms`. Sekarang, buka browser (Chrome/Edge) dan ketik alamat:
+**[http://localhost:3000](http://localhost:3000)**
 
 ---
+
+## 🔐 Akun Login (Demo)
+Gunakan akun berikut untuk mencoba fitur-fitur aplikasi:
+
+| Peran | Email | Password |
+| :--- | :--- | :--- |
+| **Administrator Utama** | `admin@bumdes.com` | `admin123` |
+| **Bendahara** | `bendahara@bumdes.com` | `bendahara123` |
+
+---
+
 © 2026 Badan Usaha Milik Desa. Dikembangkan dengan dedikasi untuk kemandirian ekonomi desa.
