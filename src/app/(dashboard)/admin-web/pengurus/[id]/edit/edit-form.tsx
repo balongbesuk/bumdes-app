@@ -8,9 +8,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { updatePengurus } from "@/app/actions/web-admin"
 import { useState, useRef } from "react"
 import Link from "next/link"
-import { ArrowLeft, Trash, UserCircle, Pencil } from "lucide-react"
+import { ArrowLeft, Trash, UserCircle, Pencil, Loader2 } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { toast } from "sonner"
 
 export default function EditPengurusForm({ initialData, id }: { initialData: any, id: string }) {
+  const router = useRouter()
   const [isPending, setIsPending] = useState(false)
   const [fotoPreview, setFotoPreview] = useState<string | null>(initialData?.fotoUrl || null)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -27,11 +30,18 @@ export default function EditPengurusForm({ initialData, id }: { initialData: any
 
   const handleAction = async (formData: FormData) => {
     setIsPending(true)
-    if (fotoPreview) formData.set("fotoUrl", fotoPreview)
+    if (fotoPreview) {
+      formData.set("fotoUrl", fotoPreview)
+    }
+    
     try {
       await updatePengurus(id, formData)
+      toast.success("Berhasil memperbarui data pengurus")
+      router.push("/admin-web/pengurus")
+      router.refresh()
     } catch (error) {
        console.error(error)
+       toast.error("Gagal memperbarui data")
        setIsPending(false)
     }
   }
@@ -116,7 +126,12 @@ export default function EditPengurusForm({ initialData, id }: { initialData: any
               <Button type="button" variant="outline">Batal</Button>
             </Link>
             <Button type="submit" disabled={isPending}>
-              {isPending ? "Menyimpan..." : "Simpan Perubahan"}
+              {isPending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Menyimpan...
+                </>
+              ) : "Simpan Perubahan"}
             </Button>
           </div>
         </form>
