@@ -13,6 +13,7 @@ import { OverviewChart } from "@/components/dashboard/overview-chart"
 import { ProfitChart } from "@/components/dashboard/profit-chart"
 import { YearlyGrowthChart } from "@/components/dashboard/yearly-growth-chart"
 import { GrowthChartContainer } from "@/components/dashboard/growth-chart-container"
+import { ProfitChartContainer } from "@/components/dashboard/profit-chart-container"
 
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -42,6 +43,7 @@ export default async function DashboardPage() {
 
   // Laba and Setoran Reminder Logic
   const profitData: any[] = []
+  const profitDataCurrentYear: any[] = []
   const unitsWithoutSetoran: string[] = []
 
   const unitListAllTime = await prisma.unitUsaha.findMany({
@@ -53,13 +55,24 @@ export default async function DashboardPage() {
   })
 
   unitListAllTime.forEach(unit => {
-     let pemasukan = 0
-     let pengeluaran = 0
+     let pemasukanAll = 0
+     let pengeluaranAll = 0
+     let pemasukanYear = 0
+     let pengeluaranYear = 0
+     
      unit.transaksi.forEach(t => {
-       if (t.kategori.tipe === 'PEMASUKAN') pemasukan += t.jumlah
-       else pengeluaran += t.jumlah
+       // All time
+       if (t.kategori.tipe === 'PEMASUKAN') pemasukanAll += t.jumlah
+       else pengeluaranAll += t.jumlah
+
+       // This year
+       if (new Date(t.tanggal).getFullYear() === now.getFullYear()) {
+          if (t.kategori.tipe === 'PEMASUKAN') pemasukanYear += t.jumlah
+          else pengeluaranYear += t.jumlah
+       }
      })
-     profitData.push({ name: unit.nama, laba: pemasukan - pengeluaran })
+     profitData.push({ name: unit.nama, laba: pemasukanAll - pengeluaranAll })
+     profitDataCurrentYear.push({ name: unit.nama, laba: pemasukanYear - pengeluaranYear })
 
      if (unit.setoranBumdes.length === 0) {
         unitsWithoutSetoran.push(unit.nama)
@@ -395,14 +408,11 @@ export default async function DashboardPage() {
             </Card>
 
             <Card>
-              <CardHeader>
-                <CardTitle>Laba Bersih Per Unit Usaha (Kumulatif)</CardTitle>
-                <CardDescription>Perbandingan performa laba murni setelah dikurangi pengeluaran operasional.</CardDescription>
-              </CardHeader>
-              <CardContent className="pl-2 overflow-x-auto pb-4">
-                <div className="min-w-[400px]">
-                  <ProfitChart data={profitData} />
-                </div>
+              <CardContent className="pl-2 overflow-x-auto pb-4 pt-4">
+                <ProfitChartContainer 
+                  allTimeData={profitData} 
+                  currentYearData={profitDataCurrentYear} 
+                />
               </CardContent>
             </Card>
           </div>
