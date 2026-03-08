@@ -1,6 +1,7 @@
-import { Metadata } from "next"
+"use client"
+
+import { useEffect, useState } from "react"
 import Link from "next/link"
-import { prisma } from "@/lib/prisma"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Building2, ArrowRight, Newspaper, Users, ChevronRight, Menu } from "lucide-react"
@@ -8,39 +9,42 @@ import { ModeToggle } from "@/components/layout/mode-toggle"
 import { HeroSlider } from "@/components/hero-slider"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
-export const metadata: Metadata = {
-  title: "Profil BUMDes - Membangun Desa Mandiri & Sejahtera",
-  description: "Portal resmi Badan Usaha Milik Desa. Informasi unit usaha, pengurus, dan kabar terbaru pembangunan ekonomi desa.",
-}
+// We use a client component to handle dynamic title based on database content
+export default function HomePage() {
+  const [data, setData] = useState<{
+    profile: any,
+    namaBumdes: string,
+    artikelTerbaru: any[],
+    heroImages: string[],
+    pengurus: any[]
+  } | null>(null)
 
-export const dynamic = "force-dynamic";
+  useEffect(() => {
+    async function fetchData() {
+      const response = await fetch('/api/public-data')
+      const result = await response.json()
+      setData(result)
+      
+      // Update browser title dynamically
+      if (result.namaBumdes) {
+        document.title = `${result.namaBumdes} - Membangun Desa Mandiri & Sejahtera`
+      }
+    }
+    fetchData()
+  }, [])
 
-export default async function HomePage() {
-  const profile = await prisma.bumdesProfile.findFirst()
-  const namaBumdes = profile?.nama || "BUMDes App"
+  if (!data) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="animate-pulse flex flex-col items-center gap-4">
+          <Building2 className="h-12 w-12 text-primary/20" />
+          <p className="text-muted-foreground animate-bounce">Memuat Profil BUMDes...</p>
+        </div>
+      </div>
+    )
+  }
 
-  // Ambil berita & kegiatan terbaru
-  const artikelTerbaru = await prisma.artikel.findMany({
-    where: { published: true },
-    orderBy: { createdAt: 'desc' },
-    take: 3,
-  })
-
-  // Ambil gambar dari artikel terbaru untuk slider (maks. 4)
-  const artikelDenganGambar = await prisma.artikel.findMany({
-    where: { published: true, gambarUrl: { not: null } },
-    orderBy: { createdAt: 'desc' },
-    select: { gambarUrl: true },
-    take: 4,
-  })
-  
-  const heroImages = artikelDenganGambar.map(a => a.gambarUrl as string)
-
-  // Ambil pengurus aktif
-  const pengurus = await prisma.pengurus.findMany({
-    where: { aktif: true },
-    orderBy: { urut: 'asc' },
-  })
+  const { profile, namaBumdes, artikelTerbaru, heroImages, pengurus } = data
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -97,7 +101,6 @@ export default async function HomePage() {
         <section className="relative w-full py-12 md:py-24 lg:py-32 xl:py-48 overflow-hidden border-b bg-gradient-to-b from-primary/5 via-background to-background">
           {heroImages.length > 0 && <HeroSlider images={heroImages} />}
           
-          {/* Decorative Backgrounds (Fallback or Overlay) */}
           <div className="absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[100px] opacity-60 pointer-events-none z-0" />
           <div className="absolute bottom-0 right-0 translate-x-1/3 translate-y-1/3 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[100px] opacity-50 pointer-events-none z-0" />
           
@@ -249,11 +252,9 @@ export default async function HomePage() {
             
             {pengurus.length > 0 ? (
               <div className="relative w-full overflow-hidden py-4 group">
-                {/* Gradient Fades for Smooth Illusion */}
                 <div className="pointer-events-none absolute inset-y-0 left-0 w-1/4 max-w-[150px] bg-gradient-to-r from-background to-transparent z-10 transition-colors"></div>
                 <div className="pointer-events-none absolute inset-y-0 right-0 w-1/4 max-w-[150px] bg-gradient-to-l from-background to-transparent z-10 transition-colors"></div>
                 
-                {/* Marquee Wrapper */}
                 <div className="flex w-max animate-marquee gap-6 md:gap-8 hover:pause">
                   {[...pengurus, ...pengurus, ...pengurus].map((p, index) => (
                     <div key={`${p.id}-${index}`} className="flex flex-col items-center space-y-4 text-center w-[230px] md:w-[280px] shrink-0 p-6 rounded-3xl border bg-card/40 hover:bg-card hover:shadow-2xl hover:-translate-y-2 hover:border-primary/20 transition-all duration-500 backdrop-blur-sm">
