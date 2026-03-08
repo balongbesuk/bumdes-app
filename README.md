@@ -1,4 +1,4 @@
-# BUMDes App - Simpel Sistem Manajemen Keuangan & Portal Desa
+# BUMDes App - Simpel Sistem Manajemen Keuangan & Berita
 
 Sistem Informasi Manajemen BUMDes adalah aplikasi berbasis web yang dirancang untuk membantu pengelolaan unit usaha desa secara transparan, akuntabel, dan profesional.
 
