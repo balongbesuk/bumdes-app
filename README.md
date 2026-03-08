@@ -60,13 +60,28 @@ Jika Anda tidak menggunakan Git, cukup download script ini sebagai file ZIP (Kli
    npx prisma db seed
    ```
 
-### Langkah 4: Menjalankan Aplikasi
-Setelah persiapan selesai, jalankan perintah:
-```bash
-npm run dev
-```
-Tunggu hingga muncul pesan seperti `Ready in ...ms`. Sekarang, buka browser (Chrome/Edge) dan ketik alamat:
+### Langkah 4: Menjalankan Aplikasi (Release Publik)
+
+Untuk penggunaan publik, presentasi, atau rilis resmi, Anda **wajib** melakukan pengepakan kode (Build) terlebih dahulu agar aplikasi berjalan cepat, aman, dan tanpa indikator pengembangan (seperti logo "N" atau Dev Tools).
+
+1. **Lakukan Pengepakan (Build):**
+   ```bash
+   npm run build
+   ```
+   *Tunggu hingga proses selesai (biasanya 1-2 menit).*
+
+2. **Jalankan Versi Produksi:**
+   ```bash
+   npm run start
+   ```
+
+Sekarang, buka browser (Chrome/Edge) dan buka alamat:
 **[http://localhost:3000](http://localhost:3000)**
+
+> [!TIP]
+> **Mengapa menggunakan `start`, bukan `dev`?**
+> - **`npm run dev`**: Hanya digunakan saat mengedit kode (sambil ngoding). Lambat dan menampilkan fitur bantuan developer.
+> - **`npm run build` & `npm run start`**: Versi final yang kencang, ringan, dan siap dilihat publik.
 
 ---
 
