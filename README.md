@@ -92,6 +92,7 @@ Gunakan akun berikut untuk mencoba fitur-fitur aplikasi:
 | **Administrator Utama** | `admin@bumdes.com` | `admin123` |
 | **Bendahara** | `bendahara@bumdes.com` | `bendahara123` |
 
+Link Demo: **[https://bumdes-app-tau.vercel.app/](https://bumdes-app-tau.vercel.app/)**
 ---
 
 © 2026 Badan Usaha Milik Desa. Dikembangkan dengan dedikasi untuk kemandirian ekonomi desa.
